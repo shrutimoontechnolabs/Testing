@@ -29,11 +29,11 @@
 
   //handle image
   $image = '';
-  if(!empty([$_FILES]['image']['name'])){
-    $image_name = basename([$_FILES]['image']['name']);
+  if(!empty($_FILES['image']['name'])){
+    $image_name = basename($_FILES['image']['name']);
     $target_dir =  "uploads/";
     $target_file = $target_dir . $image_name;
-    if (move_uploaded_file([$_FILES]['image']['tmp_name'], $target_file)){
+    if (move_uploaded_file($_FILES['image']['tmp_name'], $target_file)){
       $image = $target_file;
     }
     else{
@@ -54,11 +54,11 @@
       $conn->query($hobby_sql);
   }
   }
-  echo"Registration successful:";
+  echo '<script>alert("Registration successfully!")</script>';
   } 
 
   else{
-    echo "error";
+    echo "error". $conn->error;
   }
  }
  $conn->close();
