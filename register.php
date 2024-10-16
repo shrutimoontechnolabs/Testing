@@ -23,7 +23,6 @@
   $email = $_POST['email'];
   $password = $_POST['password'];
   $phone = $_POST['phone'];
-  $image = $_POST['image'];
   $date = $_POST['date'];
   $city = $_POST['city'];
   $gender = $_POST['gender'];
@@ -42,7 +41,7 @@
     }
   }
 
-  $sql = "INSERT INTO user(fname,lname, email, password, phone, image, date, city, gender) 
+  $sql = "INSERT INTO user (fname,lname, email, password, phone, image, date, city, gender) 
           values ('$fname' ,'$lname', '$email', '$password', '$phone', '$image', '$date', '$city', '$gender')";
 
   if ($conn->query($sql) === TRUE) {
@@ -50,11 +49,10 @@
 
   if(isset($_POST['hobby'])){
      $hobby = $_POST['hobby'];
-     foreach($hobby as $h_id)
-     {
-      $hobby_sql = "INSERT INTO hobby (h_id, h_name) values ('$h_id', '$u_id')";
-      $conn->query($hobby_sql); 
-     }
+     foreach($hobby as $h_id) {
+      $hobby_sql = "INSERT INTO user_hobby (u_id, h_id) values ('$u_id', '$h_id')";
+      $conn->query($hobby_sql);
+  }
   }
   echo"Registration successful:";
   } 
@@ -144,48 +142,48 @@
         </div>  
 
         <div class="container">
-            <form id="detailform" novalidate>
+            <form id="detailform" method="POST" enctype="multipart/form-data" novalidate>
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label>FirstName</label>
-                      <input type="text" class="form-control" placeholder="First name" id="firstName" required>
+                      <input type="text" class="form-control" placeholder="First name" name="fname" id="firstName" required>
                       <div class="text-danger" id="firstNameError"></div>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label>LastName</label>
-                      <input type="text" class="form-control" placeholder="Last name" id="lastName" required>
+                      <input type="text" class="form-control" placeholder="Last name" name="lname" id="lastName" required>
                       <div class="text-danger" id="lastNameError"></div>
                     </div>
                   </div>
                 <div class="mb-3">
                     <label>Email</label>
-                    <input type="email" class="form-control" placeholder="Eg. example@email.com" id="email" required>
+                    <input type="email" class="form-control" placeholder="Eg. example@email.com" name="email" id="email" required>
                     <div class="text-danger" id="emailError"></div>
                 </div>
 
                 <div class="row">
                     <div class=" col-md-6 mb-3">
                         <label>Password</label>
-                        <input type="password" class="form-control" placeholder="password" id="password" required>
+                        <input type="password" class="form-control" placeholder="password" name="password" id="password" required>
                         <div class="text-danger" id="passwordError"></div>
                     </div>
 
                     <div class="col-md-6 mb-3">
                         <label>Confirm Password</label>
-                        <input type="password" class="form-control" placeholder="confirmpassword" id="confirmpassword" required>
+                        <input type="password" class="form-control" placeholder="confirmpassword" name="confirmpassword" id="confirmpassword" required>
                         <div class="text-danger" id="confirmpasswordError"></div>
                     </div>
                 </div>
 
                 <div class="mb-3">
                     <label>Phone</label>
-                    <input type="number" class="form-control" placeholder="Eg. 9825982525" id="phone" required>
+                    <input type="number" class="form-control" placeholder="Eg. 9825982525" name="phone" id="phone" required>
                     <div class="text-danger" id="phoneError"></div>
                 </div>
 
                 <div class="mb-3">
                     <label for="profilePic" class="form-label">Upload Profile Picture</label>
-                    <input type="file" class="form-control" id="profilePic" name="profilePic" accept="image/*" required>
+                    <input type="file" class="form-control" id="profilePic" name="image" accept="image/*" required>
                     <div class="text-danger" id="profilePicError"></div>
                 </div>
 
@@ -197,7 +195,7 @@
 
                 <div class="mb-3">
                     <label for="City" class="form-label">City</label>
-                    <select class="form-select" id="city" aria-label="Default select example">
+                    <select class="form-select" id="city" name="city" aria-label="Default select example">
                         <option selected>Open this select menu</option>
                         <option value="1">Ahmedabad</option>
                         <option value="2">Surat</option>
@@ -260,7 +258,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-------------------Validation--------------------------->
-    <script>
+    <!-- <script>
     $(document).ready(function(){
         $('#detailform').on('submit', function(e){
             e.preventDefault();
@@ -275,7 +273,7 @@
             var password = $('#password').val().trim();
             var confirmPassword = $('#confirmpassword').val().trim();
             var city = $('#city').val();
-            var hobbies = $('input[name="hobbies"]:checked');
+            var hobbies = $('input[name="hobby[]"]:checked');
             var gender = $('input[name="gender"]:checked');
             
             var isValid = true;
@@ -327,10 +325,11 @@
 
             if (isValid) {
                 alert("Form submitted successfully!"); 
+                this.submit();
             }
         });
     });
-    </script>
+    </script> -->
 
 </body>
 </html>
