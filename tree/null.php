@@ -123,3 +123,22 @@ displayCategories($categoryTree);
 <?php
 $conn->close();
 ?>
+
+
+
+<!-- function buildTree(array &$categories, $parentId = null) {
+    $branch = []; // This will hold the current set of categories
+
+    foreach ($categories as &$category) { // Go through each category
+        // Check if this category is a child of the given parent
+        if ($category['parent_id'] === $parentId) {
+            $children = buildTree($categories, $category['id']); // Find any children
+            if ($children) { // If children exist
+                $category['children'] = $children; // Add them to the current category
+            }
+            $branch[] = $category; // Add the current category to the branch
+        }
+    }
+
+    return $branch; // Return the full branch
+} -->
