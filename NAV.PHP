@@ -166,4 +166,12 @@ function displayDropdown($children) {
 <?php
 $conn->close();
 ?>
-'''
+
+<!-- 
+
+CREATE TABLE navcategories (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    parent_id INT DEFAULT NULL,
+    FOREIGN KEY (parent_id) REFERENCES navcategories(id) ON DELETE CASCADE
+); -->
