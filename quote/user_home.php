@@ -3,7 +3,7 @@ session_start();
 include 'database.php';
 
 // Check if the user is logged in
-if (!isset($_SESSION['user_id']) || $_SESSION['role_id'] != 2) {
+if (!isset($_SESSION['user_id']) || $_SESSION['role_id'] != 2) { // Assuming role_id for User is 3
     header('Location: login.php');
     exit();
 }
@@ -27,23 +27,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['answer'])) {
         echo "Error: " . mysqli_error($conn);
     }
 }
-
-// Insert Reply
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reply'])) {
-    $reply_text = mysqli_real_escape_string($conn, $_POST['reply_text']);
-    $answer_id = mysqli_real_escape_string($conn, $_POST['answer_id']);
-    $user_id = $_SESSION['user_id'];
-
-    $query = "INSERT INTO replies (answer_id, user_id, reply_text) VALUES ($answer_id, $user_id, '$reply_text')";
-    
-    if (mysqli_query($conn, $query)) {
-        // Redirect to avoid form resubmission
-        header('Location: user_home.php');
-        exit();
-    } else {
-        echo "Error: " . mysqli_error($conn);
-    }
-}
 ?>
 
 <!DOCTYPE html>
@@ -54,8 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reply'])) {
     <title>User Home</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        .reply-form { display: none; } /* Hide reply forms by default */
-        .reply-btn { cursor: pointer; color: blue; } /* Style reply button */
+        .answer-form { display: none; } /* Hide answer forms by default */
     </style>
 </head>
 <body>
@@ -66,55 +48,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reply'])) {
         <?php while ($question = mysqli_fetch_assoc($questions)): ?>
             <div class="card my-3">
                 <div class="card-body">
-                    <h5 class="card-title">Question: <?php echo $question['question_text']; ?></h5>
+                    <h5 class="card-title" onclick="toggleAnswerForm(<?php echo $question['id']; ?>)">
+                        <?php echo $question['question_text']; ?>
+                    </h5>
                     
-                    <!-- Display answers -->
-                    <?php
-                    $question_id = $question['id'];
-                    $answers = mysqli_query($conn, "SELECT * FROM answers WHERE question_id = $question_id");
-                    while ($answer = mysqli_fetch_assoc($answers)): ?>
-                        <div class="mb-3">
-                            <p><strong>User <?php echo $answer['user_id']; ?>:</strong> <?php echo $answer['answer_text']; ?></p>
-                            
-                            <!-- Display replies only if there are any -->
-                            <?php
-                            $answer_id = $answer['id'];
-                            $replies = mysqli_query($conn, "SELECT * FROM replies WHERE answer_id = $answer_id");
-                            if (mysqli_num_rows($replies) > 0): ?>
-                                <div class="ms-3">
-                                    <h6>Replies:</h6>
-                                    <?php while ($reply = mysqli_fetch_assoc($replies)): ?>
-                                        <p><strong>User <?php echo $reply['user_id']; ?>:</strong> <?php echo $reply['reply_text']; ?></p>
-                                    <?php endwhile; ?>
-                                </div>
-                            <?php endif; ?>
-
-                            <!-- Reply form toggle button (Instagram-like icon) -->
-                            <span class="reply-btn" onclick="toggleReplyForm(<?php echo $answer['id']; ?>)">
-                                <i class="bi bi-chat-left-text"></i> Reply
-                            </span>
-                            
-                            <!-- Reply form (initially hidden, shows when clicking on the reply icon) -->
-                            <div id="reply-form-<?php echo $answer['id']; ?>" class="reply-form mt-3">
-                                <form action="user_home.php" method="POST">
-                                    <div class="mb-3">
-                                        <textarea class="form-control" name="reply_text" placeholder="Your reply..." required></textarea>
-                                    </div>
-                                    <input type="hidden" name="answer_id" value="<?php echo $answer['id']; ?>">
-                                    <button type="submit" name="reply" class="btn btn-sm btn-outline-primary">Submit Reply</button>
-                                </form>
+                    <!-- Answer form (initially hidden, shows when clicking on the question) -->
+                    <div id="answer-form-<?php echo $question['id']; ?>" class="answer-form mt-3">
+                        <form action="user_home.php" method="POST">
+                            <div class="mb-3">
+                                <textarea class="form-control" name="answer_text" placeholder="Your answer..." required></textarea>
                             </div>
-                        </div>
-                    <?php endwhile; ?>
-
-                    <!-- Answer form -->
-                    <form action="user_home.php" method="POST">
-                        <div class="mb-3">
-                            <textarea class="form-control" name="answer_text" placeholder="Your answer..." required></textarea>
-                        </div>
-                        <input type="hidden" name="question_id" value="<?php echo $question['id']; ?>">
-                        <button type="submit" name="answer" class="btn btn-sm btn-primary">Submit Answer</button>
-                    </form>
+                            <input type="hidden" name="question_id" value="<?php echo $question['id']; ?>">
+                            <button type="submit" name="answer" class="btn btn-sm btn-primary">Submit Answer</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         <?php endwhile; ?>
@@ -122,13 +69,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reply'])) {
         <a href="logout.php" class="btn btn-danger mt-4">Logout</a>
     </div>
 
-    <!-- Bootstrap and JavaScript for toggling the reply form -->
+    <!-- Bootstrap and JavaScript for toggling the answer form -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Function to toggle reply form visibility
-        function toggleReplyForm(answerId) {
-            var replyForm = document.getElementById('reply-form-' + answerId);
-            replyForm.style.display = (replyForm.style.display === 'none' || replyForm.style.display === '') ? 'block' : 'none'; // Toggle visibility
+        // Function to toggle answer form visibility
+        function toggleAnswerForm(questionId) {
+            var answerForm = document.getElementById('answer-form-' + questionId);
+            answerForm.style.display = (answerForm.style.display === 'none' || answerForm.style.display === '') ? 'block' : 'none'; // Toggle visibility
         }
     </script>
 </body>

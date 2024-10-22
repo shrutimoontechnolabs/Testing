@@ -1,3 +1,30 @@
+<?php
+session_start();
+include 'database.php';
+
+// Handle registration form submission
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $username = mysqli_real_escape_string($conn, $_POST['username']);
+    $password = mysqli_real_escape_string($conn, $_POST['password']);
+    
+    // Check if the username already exists
+    $checkUserQuery = "SELECT * FROM users WHERE username = '$username'";
+    $checkResult = mysqli_query($conn, $checkUserQuery);
+    
+    if (mysqli_num_rows($checkResult) > 0) {
+        echo "Username already exists!";
+    } else {
+        // Insert new user into the database with role_id = 2
+        $insertQuery = "INSERT INTO users (username, password, role_id) VALUES ('$username', '$password', 2)";
+        if (mysqli_query($conn, $insertQuery)) {
+            echo "Registration successful! You can now log in.";
+        } else {
+            echo "Error: " . mysqli_error($conn);
+        }
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
