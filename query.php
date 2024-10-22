@@ -17,9 +17,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_SESSION['role_id'] = $user['role_id'];
 
             if ($user['role_id'] == 1) {
-                header('Location: home_admin.php'); // Redirect to admin home
+                header('Location: home_admin.php'); 
             } else {
-                header('Location: home_user.php');  // Redirect to user home
+                header('Location: home_user.php');  
             }
             exit();
         } else {
