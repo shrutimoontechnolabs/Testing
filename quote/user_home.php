@@ -3,7 +3,7 @@ session_start();
 include 'database.php';
 
 // Check if the user is logged in
-if (!isset($_SESSION['user_id']) || $_SESSION['role_id'] != 2) { // Assuming role_id for User is 3
+if (!isset($_SESSION['user_id']) || $_SESSION['role_id'] != 2) { // Assuming role_id for User is 2
     header('Location: login.php');
     exit();
 }
@@ -38,6 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['answer'])) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .answer-form { display: none; } /* Hide answer forms by default */
+        .answers-list { margin-top: 10px; } /* Style for the answers list */
     </style>
 </head>
 <body>
@@ -61,6 +62,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['answer'])) {
                             <input type="hidden" name="question_id" value="<?php echo $question['id']; ?>">
                             <button type="submit" name="answer" class="btn btn-sm btn-primary">Submit Answer</button>
                         </form>
+
+                        <!-- Fetch and display answers for the question -->
+                        <div class="answers-list">
+                            <?php
+                            $question_id = $question['id'];
+                            $answers = mysqli_query($conn, "SELECT * FROM answers WHERE question_id = $question_id");
+
+                            while ($answer = mysqli_fetch_assoc($answers)): ?>
+                                <div class="alert alert-secondary mt-1">
+                                    <strong>User <?php echo $answer['user_id']; ?>:</strong> <?php echo $answer['answer_text']; ?>
+                                </div>
+                            <?php endwhile; ?>
+                        </div>
                     </div>
                 </div>
             </div>
