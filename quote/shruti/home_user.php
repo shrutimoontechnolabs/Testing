@@ -2,13 +2,11 @@
 session_start();
 $isLoggin = isset($_SESSION['user_id']);
 
-// Check if the user is logged in and has the correct role
 if (!isset($_SESSION['user_id']) || $_SESSION['role_id'] != 2) {
     header('Location: ../login.php');
     exit();
 }
 
-// Database connection
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -16,21 +14,21 @@ $dbname = "pt2";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-// Check connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Fetch questions
 $questions = mysqli_query($conn, "SELECT * FROM question");
 
-// Insert answer
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['answer'])) {
     $answer_text = mysqli_real_escape_string($conn, $_POST['answer_text']);
     $question_id = mysqli_real_escape_string($conn, $_POST['question_id']);
     $user_id = $_SESSION['user_id'];
 
-    // Use prepared statements for security
+    $uname = "SELECT name from  user where u_id =" . $question['u_id'];
+    $conn ->query($uname);
+
     $query = "INSERT INTO answers (question_id, user_id, answer_text) VALUES (?, ?, ?)";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("iis", $question_id, $user_id, $answer_text);
@@ -42,10 +40,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['answer'])) {
         echo "Error: " . $stmt->error;
     }
 }
-
-// Close the connection
-$conn->close();
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -56,18 +50,50 @@ $conn->close();
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <style>
         body {
-            background-color: #495E57;
-            color: white;
+            background-color: #FFFBF5; 
+            color: #495E57; 
         }
         .bg-body-blue {
-            background-color: #DDDDDD;
+            background-color: #E4E0E1;
         }
-        h1 {
-            color: white;
+        h1, h2 {
+            color: #7743DB; 
             text-align: center;
         }
-        .answer-form { display: none; }
-        .answers-list { margin-top: 10px; }
+        .navbar {
+            background-color: #C3ACD0; 
+        }
+
+        .nav-link {
+            color: #FFFBF5 !important; 
+        }
+
+        .nav-link:hover {
+            color: #E4E0E1 !important; 
+        }
+
+        .card {
+            background-color: #E4E0E1; 
+            border: none;
+        }
+        .btn-primary {
+            background-color: #7743DB; 
+            border: none; 
+        }
+        .btn-primary:hover {
+            background-color: #C3ACD0; 
+        }
+        .answer-form { 
+            display: none; 
+        }
+        .answers-list { 
+            margin-top: 10px; 
+        }
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #7743DB; 
+        }
     </style>
 </head>
 <body>
@@ -99,6 +125,15 @@ $conn->close();
             <h5 class="card-title" onclick="toggleAnswerForm(<?php echo $question['q_id']; ?>)">
                 <?php echo $question['question']; ?>
             </h5>
+
+            <?php echo $question['description']; ?>
+
+            <div class="row">
+            <div class="date col-md-6"><strong>Created At:</strong><?php echo $question['created_at']; ?></div>
+            <div class="user col-md-6">User:<?php echo $uname; ?></div>
+            </div>
+
+
             <div id="answer-form-<?php echo $question['q_id']; ?>" class="answer-form mt-3">
                 <form action="home_user.php" method="POST">
                     <div class="mb-3">
@@ -107,10 +142,24 @@ $conn->close();
                     <input type="hidden" name="question_id" value="<?php echo $question['q_id']; ?>">
                     <button type="submit" name="answer" class="btn btn-sm btn-primary">Submit Comment</button>
                 </form>
+
+                <div class="answers-list">
+                    <?php
+                    $question_id = $question['q_id'];
+                    $answers = mysqli_query($conn, "SELECT * FROM answers WHERE question_id = $question_id");
+
+                    while ($answer = mysqli_fetch_assoc($answers)): ?>
+                        <div class="alert alert-secondary mt-1">
+                            <strong>User <?php echo $answer['user_id']; ?>:</strong> <?php echo $answer['answer_text']; ?>
+                        </div>
+                    <?php endwhile; ?>
+                </div>
             </div>
         </div>
     </div>
 <?php endwhile; ?>
+
+<?php $conn->close(); ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 <script>
@@ -119,5 +168,9 @@ $conn->close();
         answerForm.style.display = (answerForm.style.display === 'none' || answerForm.style.display === '') ? 'block' : 'none'; // Toggle visibility
     }
 </script>
+
+<footer>
+    <p>&copy; 2024 Your Website. All rights reserved.</p>
+</footer>
 </body>
 </html>
