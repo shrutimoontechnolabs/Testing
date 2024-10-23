@@ -130,7 +130,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['answer'])) {
 
             <div class="row">
             <div class="date col-md-6"><strong>Created At:</strong><?php echo $question['created_at']; ?></div>
-            <div class="user col-md-6">User:<?php echo $uname; ?></div>
+            <div class="user col-md-6">User:<?php  
+                $uname_query = "SELECT name FROM user WHERE u_id =" . $question['u_id'];
+                $uname_result = $conn->query($uname_query);
+                $uname_row = $uname_result->fetch_assoc();
+                echo $uname_row['name'];
+            ?> ?></div>
             </div>
 
 
