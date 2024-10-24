@@ -122,8 +122,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['answer'])) {
 <?php while ($question = mysqli_fetch_assoc($questions)): ?>
     <div class="card my-3">
         <div class="card-body">
-            <h5 class="card-title" onclick="toggleAnswerForm(<?php echo $question['q_id']; ?>)">
-                <?php echo $question['question']; ?>
+            <h5 class="card-title">
+               <a href="que_detail.php?q_id=<?php echo $question['question']; ?>"> <?php echo $question['question']; ?> </a>
             </h5>
 
             <?php echo $question['description']; ?>
@@ -167,13 +167,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['answer'])) {
 <?php $conn->close(); ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    function toggleAnswerForm(questionId) {
-        var answerForm = document.getElementById('answer-form-' + questionId);
-        answerForm.style.display = (answerForm.style.display === 'none' || answerForm.style.display === '') ? 'block' : 'none'; // Toggle visibility
-    }
-</script>
-
 <footer>
     <p>&copy; 2024 Your Website. All rights reserved.</p>
 </footer>
