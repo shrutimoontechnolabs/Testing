@@ -92,16 +92,18 @@ active
                                         </div>
                                     </div>
                                     <div class="mb-3 col-lg-6">
-                                        <label for="role" class="form-label">Assign Role</label>
-                                        <select class="form-select" id="role" name="role">
-                                    @foreach ($roles as $id => $title)
-                                        <option value="{{ $id }}" {{ old('role', $user->role_id) == $id ? 'selected' : '' }}>
-                                            {{ $title }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                                    <label for="role" class="form-label">Assign Role</label>
+                                    <select class="form-select" id="role" name="role">
+                                        <option value="">Select a Role</option>
+                                        @foreach ($roles as $id => $title)
+                                            <option value="{{ $id }}" 
+                                                {{ (int) old('role', $user->role_id) === $id ? 'selected' : '' }}>
+                                                {{ $title }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
 
-                                    </div>
 
                                     <!-- Submit Button -->
                                     <button id="updateBtn" type="submit" class="btn btn-primary">Update User</button>
