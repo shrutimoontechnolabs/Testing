@@ -16,6 +16,7 @@
     <meta name="description" content="Codedthemes">
     <meta name="keywords" content="flat ui, admin flat ui, Admin , Responsive, Landing, Bootstrap, App, Template, Mobile, iOS, Android, apple, creative app">
     <meta name="author" content="Codedthemes">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- Favicon icon -->
     <link rel="icon" href="{{asset('assets/auth/images/favicon.ico')}}" type="image/x-icon">
     <!-- Google font-->
@@ -426,32 +427,27 @@ button#cancelDelete {
   <script src="{{ asset('assets/auth/js/jquery.mCustomScrollbar.concat.min.js')}}"></script>
   <script>
     function trackEvent(eventName, eventLabel = null, metadata = {}) {
-        fetch('/track-event', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer YOUR_AUTH_TOKEN` // Optional, for authenticated users
-            },
-            body: JSON.stringify({
-                event_name: eventName,
-                event_label: eventLabel,
-                metadata: metadata
-            })
+      const authToken = document.querySelector('meta[name="csrf-token"]').content; // Fetch CSRF token from meta tag
+      fetch('/track-event', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': authToken // Include CSRF token for authenticated users
+        },
+        body: JSON.stringify({
+          event_name: eventName,
+          event_label: eventLabel,
+          metadata: metadata
         })
-        .then(response => response.json())
-        .then(data => console.log('Event logged:', data))
-        .catch(error => console.error('Error logging event:', error));
+      })
+      .then(response => response.json())
+      .then(data => console.log('Event logged:', data))
+      .catch(error => console.error('Error logging event:', error));
     }
 
     // Automatically track page load (example)
     trackEvent('page_view', window.location.pathname, { timestamp: new Date().toISOString() });
-</script>
-<script>
-    // Track a button click event
-    document.getElementById('submitButton').addEventListener('click', () => {
-        trackEvent('button_click', 'Submit Button', { page: 'dashboard', button_id: 'submitButton' });
-    });
-</script>
+  </script>
 @yield('script')
 
 </body>
