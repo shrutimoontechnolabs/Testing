@@ -1,0 +1,9 @@
+"Start Date","Start Date Type","End Date","End Date Type",Reason,Status
+2025-01-10,fullDay,2025-01-11,1half,"Out of Town",Pending
+2024-12-14,fullDay,2024-12-18,1half,Function,Rejected
+2024-12-24,2half,2024-12-26,fullDay,"Out of Town",Rejected
+2024-12-14,fullDay,2024-12-21,fullDay,function,Approved
+2025-01-01,,2025-01-02,,"I m Out Of Town",Pending
+2024-12-21,,2024-12-23,,Sick,Rejected
+2024-12-14,,2024-12-18,,"due to marraige function thank you",Pending
+2024-12-13,,2024-12-13,,"due to family function",Pending
